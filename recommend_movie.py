@@ -40,13 +40,16 @@ if __name__ == '__main__':
             print("That movie isn't in the database, please check your spelling.")
             break
 
-        search_parameters = ['Plot', 'Cast', 'Director']
+        search_parameters_and_weights = [('Plot', 3), ('Cast', 1), ('Director', 1)]
         cosine_similarity_values = []
-        for parameter in search_parameters:
-            values = calculate_cosine_similarity(parameter)
-            cosine_similarity_values.append(values)
+        all_weights = []
 
-        average_cosine_similarty = np.array(cosine_similarity_values).mean(axis = 0)
+        for parameter, weight in search_parameters_and_weights:
+            values = weight * calculate_cosine_similarity(parameter)
+            cosine_similarity_values.append(values)
+            all_weights.append(weight)
+
+        average_cosine_similarty = np.array(cosine_similarity_values).mean(axis = 0) / sum(all_weights)
         sorted_similarity_scores = average_cosine_similarty.argsort()[0]
 
         top_movie_positions = [-3, -4, -5, -6, -7] # Start counting at third to last because the list of plots includes the searched movie twice
